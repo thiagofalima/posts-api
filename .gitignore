@@ -1,0 +1,3 @@
+# Adicionando o .venv para que não seja commitado junto aos demais 
+# arquivos do projeto
+.venv
