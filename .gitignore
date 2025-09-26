@@ -1,3 +1,9 @@
 # Adicionando o .venv para que não seja commitado junto aos demais 
 # arquivos do projeto
 .venv
+
+# Para ignorar o arquivo de variáveis de ambiente
+.env
+
+# Para ignorar a pasta de cache
+__pycache__
