@@ -23,7 +23,7 @@ class User(db.Model):
     def __repr__(self) -> str:
         return f"USer(id={self._id!r}, username={self.username!r}"
 
-class Post:
+class Post(db.Model):
     _id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String, nullable=False)
     body: Mapped[str] = mapped_column(String, nullable=False)
