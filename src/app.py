@@ -18,22 +18,22 @@ db = SQLAlchemy(model_class=Base)
 
 class User(db.Model):
     __tablename__ = 'user'
-    _id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
 
     def __repr__(self) -> str:
-        return f"USer(id={self._id!r}, username={self.username!r}"
+        return f"User(id={self.id!r}, username={self.username!r}"
 
 class Post(db.Model):
     __tablename__ = "post"
-    _id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String, nullable=False)
     body: Mapped[str] = mapped_column(String, nullable=False)
     created: Mapped[datetime] = mapped_column(DateTime, default=datetime.datetime.now())
-    author_id: Mapped[int] = mapped_column(ForeignKey("user._id"))
+    author_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
     def __repr__(self) -> str:
-        return f"USer(id={self._id!r}, title={self.username!r}, author_id{self.author_id!r}"
+        return f"USer(id={self.id!r}, title={self.username!r}, author_id{self.author_id!r}"
 
 
 @click.command("init-db")
