@@ -7,3 +7,6 @@
 
 # Para ignorar a pasta de cache
 __pycache__
+
+# Para não subir os dados de teste
+instance
