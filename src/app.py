@@ -17,7 +17,7 @@ db = SQLAlchemy(model_class=Base)
 
 
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = "user"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
 
@@ -33,7 +33,7 @@ class Post(db.Model):
     author_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
     def __repr__(self) -> str:
-        return f"USer(id={self.id!r}, title={self.username!r}, author_id{self.author_id!r}"
+        return f"User(id={self.id!r}, title={self.username!r}, author_id{self.author_id!r}"
 
 
 @click.command("init-db")

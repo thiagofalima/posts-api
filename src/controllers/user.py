@@ -37,5 +37,10 @@ def hendle_user():
         return {"users": _list_users()}, HTTPStatus.OK
     
 
-
-
+@pages.route("/<int:user_id>", methods=["GET"])
+def get_user_by_id(user_id):
+    user = db.get_or_404(User, user_id)
+    return {
+        "id": user.id,
+        "username": user.username
+    }
