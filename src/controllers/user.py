@@ -1,6 +1,7 @@
 from flask import Blueprint, request, session
 from src.app import User, db
 from dataclasses import asdict
+from sqlalchemy import inspect
 from http import HTTPStatus
 
 # API RESTFull plural pattern
@@ -40,6 +41,26 @@ def hendle_user():
 @pages.route("/<int:user_id>", methods=["GET"])
 def get_user_by_id(user_id):
     user = db.get_or_404(User, user_id)
+    return {
+        "id": user.id,
+        "username": user.username
+    }
+
+
+# For partial updates, PATCH
+@pages.route("/<int:user_id>", methods=["GET", "PATCH"])
+def update_user_by_id(user_id):
+    user = db.get_or_404(User, user_id)
+    data = request.json
+
+    mapper = inspect(User)
+    for column in mapper.attrs:
+        if column.key in data:
+            setattr(user, column.key, data[column.key])
+    db.session.commit()
+    
+    
+
     return {
         "id": user.id,
         "username": user.username
