@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from typing_extensions import Annotated
-
+from flask_jwt_extended import JWTManager
 
 class Base(DeclarativeBase):
     pass
@@ -17,13 +17,14 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
+jwt = JWTManager()
 
 
 class User(db.Model):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-    
+
 
     def __repr__(self) -> str:
         return f"User(id={self.id!r}, username={self.username!r}"
@@ -58,6 +59,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY"),
         SQLALCHEMY_DATABASE_URI="sqlite:///posts.sqlite",
+        JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY"), 
     )
 
     if test_config is None:
@@ -73,11 +75,13 @@ def create_app(test_config=None):
     # initialize extensins
     db.init_app(app)
     migrate.init_app(app, db)
+    jwt.init_app(app)
 
     # register blueprint
-    from src.controllers import post, user
+    from src.controllers import post, user, auth
 
     app.register_blueprint(user.pages)
     app.register_blueprint(post.pages)
+    app.register_blueprint(auth.pages)
 
     return app

@@ -2,6 +2,7 @@ from flask import Blueprint, request, session
 from src.app import User, db
 from sqlalchemy import inspect
 from http import HTTPStatus
+from flask_jwt_extended import jwt_required
 
 # API RESTFull plural pattern
 pages = Blueprint("user", __name__, url_prefix="/users")
@@ -25,6 +26,7 @@ def _list_users():
     ]
 
 @pages.route("/", methods=["GET", "POST"])
+@jwt_required()
 def hendle_user():
     
     if request.method == "POST":
