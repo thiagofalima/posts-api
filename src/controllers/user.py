@@ -65,3 +65,10 @@ def update_user_by_id(user_id):
         "id": user.id,
         "username": user.username
     }
+
+@pages.route("/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    user = db.get_or_404(User, user_id)
+    db.session.delete(user)
+    db.session.commit()
+    return {"message": f"User {user.username} deleted!!"}, HTTPStatus.NO_CONTENT
