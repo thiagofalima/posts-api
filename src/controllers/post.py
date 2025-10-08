@@ -42,3 +42,16 @@ def handle_post():
     else:
         return {"posts": list_posts()}, HTTPStatus.OK
     
+@pages.route("/<int:post_id>", methods=["GET"])
+def get_post_by_id(post_id):
+    post = db.get_or_404(Post, post_id)
+    return {
+        "id": post.id,
+        "title": post.title,
+        "body": post.body,
+        "created": post.created,
+        "author_id": post.author_id,
+    }
+
+
+
