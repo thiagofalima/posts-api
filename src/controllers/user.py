@@ -58,8 +58,6 @@ def update_user_by_id(user_id):
             setattr(user, column.key, data[column.key])
     db.session.commit()
     
-    
-
     return {
         "id": user.id,
         "username": user.username
