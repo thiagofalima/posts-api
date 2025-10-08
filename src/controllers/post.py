@@ -72,4 +72,10 @@ def update_post_by_id(post_id):
         "author_id": post.author_id,
     }
 
+@pages.route("/<int:post_id>", methods=["DELETE"])
+def delete_post(post_id):
+    post = db.get_or_404(Post, post_id)
+    db.session.delete(post)
+    db.session.commit()
+    return "", HTTPStatus.NO_CONTENT
 

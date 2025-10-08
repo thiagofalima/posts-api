@@ -68,4 +68,4 @@ def delete_user(user_id):
     user = db.get_or_404(User, user_id)
     db.session.delete(user)
     db.session.commit()
-    return {"message": f"User {user.username} deleted!!"}, HTTPStatus.NO_CONTENT
+    return "", HTTPStatus.NO_CONTENT
