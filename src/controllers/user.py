@@ -1,6 +1,5 @@
 from flask import Blueprint, request, session
 from src.app import User, db
-from dataclasses import asdict
 from sqlalchemy import inspect
 from http import HTTPStatus
 

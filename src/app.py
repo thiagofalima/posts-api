@@ -70,6 +70,6 @@ def create_app(test_config=None):
     from src.controllers import user, post
 
     app.register_blueprint(user.pages)
-    # app.register_blueprint(post.pages)
+    app.register_blueprint(post.pages)
 
     return app
