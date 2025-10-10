@@ -7,9 +7,10 @@ from flask import Flask, current_app
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DateTime, ForeignKey, Integer, String, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from typing_extensions import Annotated
 from flask_jwt_extended import JWTManager
+from typing import List
 
 class Base(DeclarativeBase):
     pass
@@ -19,11 +20,22 @@ db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
 jwt = JWTManager()
 
+class Role(db.Model):
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    user: Mapped[List["User"]] = relationship(back_populates="role")
+
+    def __repr__(self) -> str:
+        return f"Role(id={self.id!r}, name={self.name!r}"
 
 class User(db.Model):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String, nullable=False)
+    role_id: Mapped[int] = mapped_column(ForeignKey("role.id"))
+    role: Mapped["Role"] = relationship(back_populates="user")
 
 
     def __repr__(self) -> str:
@@ -78,10 +90,11 @@ def create_app(test_config=None):
     jwt.init_app(app)
 
     # register blueprint
-    from src.controllers import post, user, auth
+    from src.controllers import post, user, auth, role
 
     app.register_blueprint(user.pages)
     app.register_blueprint(post.pages)
     app.register_blueprint(auth.pages)
+    app.register_blueprint(role.pages)
 
     return app

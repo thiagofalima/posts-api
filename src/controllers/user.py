@@ -2,7 +2,7 @@ from flask import Blueprint, request, session
 from src.app import User, db
 from sqlalchemy import inspect
 from http import HTTPStatus
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # API RESTFull plural pattern
 pages = Blueprint("user", __name__, url_prefix="/users")
@@ -11,6 +11,8 @@ def _create_user():
     data = request.json
     user = User(
         username=data["username"],
+        password=data["password"],
+        role_id=data["role_id"],
     )
     db.session.add(user)
     db.session.commit()
@@ -19,15 +21,24 @@ def _list_users():
     query = db.select(User)
     results =  db.session.execute(query).scalars().all()
     return [
-        {"id": result.id,
-         "username": result.username
+        {"id": user.id,
+         "username": user.username,
+         "role_id": {
+             "id": user.role.id,
+             "name": user.role.name,
+         }
         }
-        for result in results
+        for user in results
     ]
 
 @pages.route("/", methods=["GET", "POST"])
 @jwt_required()
 def hendle_user():
+    user_id = get_jwt_identity()
+    user = db.get_or_404(User, user_id)
+
+    if user.role.name != "admin":
+        return {"message": "User dont have access"}, HTTPStatus.FORBIDDEN
     
     if request.method == "POST":
         try:
