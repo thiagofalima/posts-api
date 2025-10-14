@@ -7,13 +7,38 @@ from flask_jwt_extended import jwt_required
 # API RESTFull plural pattern
 pages = Blueprint("role", __name__, url_prefix="/roles")
 
-
-@pages.route("/", methods=["POST"])
-def create_user():
+def create_role():
     data = request.json
     role = Role(
         name=data["name"],
     )
     db.session.add(role)
     db.session.commit()
-    return {"message": "Role created!"}, HTTPStatus.CREATED
+
+
+def list_roles():
+    query = db.select(Role)
+    results = db.session.execute(query).scalars().all()
+    return [
+        {
+            "id": role.id,
+            "name": role.name,
+        }
+        for role in results
+    ]
+
+@pages.route("/", methods=["GET","POST"])
+def handle_roles():
+    if request.method == "POST":
+        try:
+            create_role()
+            return {"message": "Role created!"}, HTTPStatus.CREATED
+        except ValueError as e:
+            return {"error": str(e)}, HTTPStatus.BAD_REQUEST
+    else:
+        return {"roles": list_roles()}, HTTPStatus.OK
+    
+@pages.route("/<int:role_id>", methods=["GET"])
+def get_user_by_id(role_id):
+    role = db.get_or_404(Role, role_id)
+    return {"id": role.id, "name": role.name}

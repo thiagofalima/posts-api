@@ -21,6 +21,7 @@ def app():
 def client(app):
     return app.test_client()
 
+
 @pytest.fixture()
 def access_token(client):
     role = Role(name="admin")

@@ -2,14 +2,11 @@ from http import HTTPStatus
 from src.app import Post, db
 from sqlalchemy import func
 
+
 def test_create_post(client):
 
     # Given
-    payload = {
-        "title": "test",
-        "body": "test",
-        "author_id": 1
-    }
+    payload = {"title": "test", "body": "test", "author_id": 1}
 
     # When
     response = client.post("/posts/", json=payload)
@@ -17,6 +14,7 @@ def test_create_post(client):
     # Then
     assert response.status_code == HTTPStatus.CREATED
     assert response.json == {"message": "Post created!"}
+
 
 def test_list_posts(client):
 
@@ -33,14 +31,15 @@ def test_list_posts(client):
     assert response.json == {
         "posts": [
             {
-            "id": post.id,
-            "title": post.title,
-            "body": post.body,
-            "created": post.created.strftime("%a, %d %b %Y %H:%M:%S GMT"),
-            "author_id": post.author_id,
-        }
-        ]      
+                "id": post.id,
+                "title": post.title,
+                "body": post.body,
+                "created": post.created.strftime("%a, %d %b %Y %H:%M:%S GMT"),
+                "author_id": post.author_id,
+            }
+        ]
     }
+
 
 def test_get_post_success(client):
     # Given
@@ -59,7 +58,8 @@ def test_get_post_success(client):
         "body": post.body,
         "created": post.created.strftime("%a, %d %b %Y %H:%M:%S GMT"),
         "author_id": post.author_id,
-        }
+    }
+
 
 def test_get_post_not_found(client):
     # Given
