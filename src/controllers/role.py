@@ -7,6 +7,7 @@ from flask_jwt_extended import jwt_required
 # API RESTFull plural pattern
 pages = Blueprint("role", __name__, url_prefix="/roles")
 
+
 @pages.route("/", methods=["POST"])
 def create_user():
     data = request.json

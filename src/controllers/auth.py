@@ -8,6 +8,7 @@ from flask_jwt_extended import jwt_required
 # API RESTFull plural pattern
 pages = Blueprint("auth", __name__, url_prefix="/auth")
 
+
 @pages.route("/login", methods=["POST"])
 def login():
     username = request.json.get("username", None)

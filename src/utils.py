@@ -3,6 +3,7 @@ from src.app import User, db
 from http import HTTPStatus
 from functools import wraps
 
+
 def requires_role(role_name):
 
     def decorator(f):
@@ -14,5 +15,7 @@ def requires_role(role_name):
             if user.role.name != role_name:
                 return {"message": "User dont have access"}, HTTPStatus.FORBIDDEN
             return f(*args, **kwargs)
+
         return wrapped
+
     return decorator

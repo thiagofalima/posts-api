@@ -8,6 +8,7 @@ from src.utils import requires_role
 # API RESTFull plural pattern
 pages = Blueprint("user", __name__, url_prefix="/users")
 
+
 def _create_user():
     data = request.json
     user = User(
@@ -18,19 +19,22 @@ def _create_user():
     db.session.add(user)
     db.session.commit()
 
+
 def _list_users():
     query = db.select(User)
-    results =  db.session.execute(query).scalars().all()
+    results = db.session.execute(query).scalars().all()
     return [
-        {"id": user.id,
-         "username": user.username,
-         "role_id": {
-             "id": user.role.id,
-             "name": user.role.name,
-         }
+        {
+            "id": user.id,
+            "username": user.username,
+            "role_id": {
+                "id": user.role.id,
+                "name": user.role.name,
+            },
         }
         for user in results
     ]
+
 
 @pages.route("/", methods=["GET", "POST"])
 @jwt_required()
@@ -44,15 +48,12 @@ def hendle_user():
             return {"error": str(e)}, HTTPStatus.BAD_REQUEST
     else:
         return {"users": _list_users()}, HTTPStatus.OK
-    
+
 
 @pages.route("/<int:user_id>", methods=["GET"])
 def get_user_by_id(user_id):
     user = db.get_or_404(User, user_id)
-    return {
-        "id": user.id,
-        "username": user.username
-    }
+    return {"id": user.id, "username": user.username}
 
 
 # For partial updates, PATCH
@@ -66,11 +67,9 @@ def update_user_by_id(user_id):
         if column.key in data:
             setattr(user, column.key, data[column.key])
     db.session.commit()
-    
-    return {
-        "id": user.id,
-        "username": user.username
-    }
+
+    return {"id": user.id, "username": user.username}
+
 
 @pages.route("/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):

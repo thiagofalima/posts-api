@@ -12,6 +12,7 @@ from typing_extensions import Annotated
 from flask_jwt_extended import JWTManager
 from typing import List
 
+
 class Base(DeclarativeBase):
     pass
 
@@ -19,6 +20,7 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
 jwt = JWTManager()
+
 
 class Role(db.Model):
 
@@ -29,6 +31,7 @@ class Role(db.Model):
     def __repr__(self) -> str:
         return f"Role(id={self.id!r}, name={self.name!r}"
 
+
 class User(db.Model):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -36,7 +39,6 @@ class User(db.Model):
     password: Mapped[str] = mapped_column(String, nullable=False)
     role_id: Mapped[int] = mapped_column(ForeignKey("role.id"))
     role: Mapped["Role"] = relationship(back_populates="user")
-
 
     def __repr__(self) -> str:
         return f"User(id={self.id!r}, username={self.username!r}"
@@ -71,7 +73,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY=os.getenv("SECRET_KEY"),
         SQLALCHEMY_DATABASE_URI="sqlite:///posts.sqlite",
-        JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY"), 
+        JWT_SECRET_KEY=os.getenv("JWT_SECRET_KEY"),
     )
 
     if test_config is None:

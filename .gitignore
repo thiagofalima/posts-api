@@ -10,3 +10,6 @@ __pycache__
 
 # Para não subir os dados de teste
 instance
+
+# pytest
+.pytest_cache   
