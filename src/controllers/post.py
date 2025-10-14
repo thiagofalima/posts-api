@@ -34,7 +34,7 @@ def handle_post():
     if request.method == "POST":
         try:
             create_post()
-            return {"mssage": "Post created!"}, HTTPStatus.CREATED
+            return {"message": "Post created!"}, HTTPStatus.CREATED
         except ValueError as e:
             return {"error": str(e)}, HTTPStatus.BAD_REQUEST
 
