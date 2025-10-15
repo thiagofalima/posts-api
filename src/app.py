@@ -5,6 +5,8 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from src.models.base import db
 from flask_bcrypt import Bcrypt
+from flask import json
+from werkzeug.exceptions import HTTPException
 
 
 load_dotenv()
@@ -31,5 +33,19 @@ def create_app(environment=None):
     app.register_blueprint(post.pages)
     app.register_blueprint(auth.pages)
     app.register_blueprint(role.pages)
+
+    @app.errorhandler(HTTPException)
+    def handle_exception(e):
+        """Return JSON instead of HTML for HTTP errors."""
+        # start with the correct headers and status code from the error
+        response = e.get_response()
+        # replace the body with JSON
+        response.data = json.dumps({
+            "code": e.code,
+            "name": e.name,
+            "description": e.description,
+        })
+        response.content_type = "application/json"
+        return response
 
     return app
