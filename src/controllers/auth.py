@@ -13,7 +13,7 @@ def login():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     user = db.session.execute(db.select(User).where(User.username == username)).scalar()
-    if not user or bcrypt.check_password_hash(user.password, password):
+    if not user or not bcrypt.check_password_hash(user.password, password):
         return {"message": "Bad username or password"}, HTTPStatus.UNAUTHORIZED
 
     access_token = create_access_token(identity=str(user.id))

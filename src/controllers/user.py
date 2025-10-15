@@ -39,8 +39,9 @@ def _list_users():
 
 @pages.route("/", methods=["GET", "POST"])
 @jwt_required()
+@requires_role("admin")
 def hendle_user():
-    requires_role("admin")
+    
     if request.method == "POST":
         try:
             _create_user()
