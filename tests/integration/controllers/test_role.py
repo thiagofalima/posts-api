@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from src.app import Role, db
+from src.models import Role, db
 
 
 def test_create_role(client):

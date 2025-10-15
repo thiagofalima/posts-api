@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from src.app import User, Role, db
+from src.models import User, Role, db
 from sqlalchemy import func
 
 def test_get_user_success(client):

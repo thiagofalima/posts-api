@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from src.app import Post, db
+from src.models import Post, db
 from sqlalchemy import func
 
 

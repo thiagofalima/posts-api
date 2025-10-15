@@ -1,5 +1,5 @@
-from flask import Blueprint, request, session
-from src.app import Role, db
+from flask import Blueprint, request
+from src.models import Role, db
 from sqlalchemy import inspect
 from http import HTTPStatus
 from flask_jwt_extended import jwt_required

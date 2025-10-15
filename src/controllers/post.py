@@ -1,5 +1,5 @@
-from flask import Blueprint, request, session, jsonify
-from src.app import Post, db
+from flask import Blueprint, request
+from src.models import Post, db
 from sqlalchemy import inspect
 from http import HTTPStatus
 
