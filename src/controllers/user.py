@@ -5,14 +5,20 @@ from http import HTTPStatus
 from flask_jwt_extended import jwt_required
 from src.utils import requires_role
 from src.app import bcrypt
-from src.views import UserSchema
+from src.views import UserSchema, CreateUserSchema
+from marshmallow import ValidationError
 
 # API RESTFull plural pattern
 pages = Blueprint("user", __name__, url_prefix="/users")
 
 
 def _create_user():
-    data = request.json
+    create_user_schema = CreateUserSchema()
+    try:
+        data = create_user_schema.load(request.json)
+    except ValidationError as err:
+        return err.messages, HTTPStatus.UNPROCESSABLE_ENTITY
+    
     user = User(
         username=data["username"],
         password=bcrypt.generate_password_hash(data["password"]),
@@ -20,6 +26,7 @@ def _create_user():
     )
     db.session.add(user)
     db.session.commit()
+    return {"message": "User created!"}, HTTPStatus.CREATED
 
 
 def _list_users():
@@ -33,12 +40,11 @@ def _list_users():
 @pages.route("/", methods=["GET", "POST"])
 # @jwt_required()
 # @requires_role("admin")
-def hendle_user():
+def handle_user():
     
     if request.method == "POST":
         try:
-            _create_user()
-            return {"message": "User created!"}, HTTPStatus.CREATED
+            return _create_user()
         except ValueError as e:
             return {"error": str(e)}, HTTPStatus.BAD_REQUEST
     else:
