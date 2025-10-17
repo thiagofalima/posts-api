@@ -7,6 +7,7 @@ from src.models.base import db
 from flask_bcrypt import Bcrypt
 from flask import json
 from werkzeug.exceptions import HTTPException
+from flask_marshmallow import Marshmallow
 
 
 load_dotenv()
@@ -14,8 +15,9 @@ load_dotenv()
 migrate = Migrate()
 jwt = JWTManager()
 bcrypt = Bcrypt()
+ma = Marshmallow()
 
-def create_app(environment=None):
+def create_app(environment="Development"):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(f"src.config.{environment.title()}Config")
@@ -25,6 +27,7 @@ def create_app(environment=None):
     migrate.init_app(app, db)
     jwt.init_app(app)
     bcrypt.init_app(app)
+    ma.init_app(app)
 
     # register blueprint
     from src.controllers import post, user, auth, role

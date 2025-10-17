@@ -5,6 +5,7 @@ from http import HTTPStatus
 from flask_jwt_extended import jwt_required
 from src.utils import requires_role
 from src.app import bcrypt
+from src.views import UserSchema
 
 # API RESTFull plural pattern
 pages = Blueprint("user", __name__, url_prefix="/users")
@@ -23,23 +24,15 @@ def _create_user():
 
 def _list_users():
     query = db.select(User)
-    results = db.session.execute(query).scalars().all()
-    return [
-        {
-            "id": user.id,
-            "username": user.username,
-            "role_id": {
-                "id": user.role.id,
-                "name": user.role.name,
-            },
-        }
-        for user in results
-    ]
+    users = db.session.execute(query).scalars().all()
+    users_schema = UserSchema(many=True)
+    return users_schema.dump(users)
+
 
 
 @pages.route("/", methods=["GET", "POST"])
-@jwt_required()
-@requires_role("admin")
+# @jwt_required()
+# @requires_role("admin")
 def hendle_user():
     
     if request.method == "POST":
@@ -55,7 +48,8 @@ def hendle_user():
 @pages.route("/<int:user_id>", methods=["GET"])
 def get_user_by_id(user_id):
     user = db.get_or_404(User, user_id)
-    return {"id": user.id, "username": user.username}
+    user_schema = UserSchema()
+    return user_schema.dumps(user)
 
 
 # For partial updates, PATCH
@@ -69,8 +63,8 @@ def update_user_by_id(user_id):
         if column.key in data:
             setattr(user, column.key, data[column.key])
     db.session.commit()
-
-    return {"id": user.id, "username": user.username}
+    user_schema = UserSchema()
+    return user_schema.dump(user)
 
 
 @pages.route("/<int:user_id>", methods=["DELETE"])

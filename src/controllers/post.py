@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from src.models import Post, db
 from sqlalchemy import inspect
 from http import HTTPStatus
+from src.views import PostSchema
 
 pages = Blueprint("post", __name__, url_prefix="/posts")
 
@@ -15,17 +16,9 @@ def create_post():
 
 def list_posts():
 
-    results = db.session.execute(db.select(Post)).scalars().all()
-    return [
-        {
-            "id": result.id,
-            "title": result.title,
-            "body": result.body,
-            "created": result.created,
-            "author_id": result.author_id,
-        }
-        for result in results
-    ]
+    posts = db.session.execute(db.select(Post)).scalars().all()
+    posts_schema = PostSchema(many=True)
+    return posts_schema.dump(posts)
 
 
 @pages.route("/", methods=["GET", "POST"])
@@ -45,13 +38,8 @@ def handle_post():
 @pages.route("/<int:post_id>", methods=["GET"])
 def get_post_by_id(post_id):
     post = db.get_or_404(Post, post_id)
-    return {
-        "id": post.id,
-        "title": post.title,
-        "body": post.body,
-        "created": post.created,
-        "author_id": post.author_id,
-    }
+    post_schema = PostSchema()
+    return post_schema.dump(post)
 
 
 @pages.route("/<int:post_id>", methods=["GET", "PATCH"])
@@ -64,14 +52,9 @@ def update_post_by_id(post_id):
         if column.key in data:
             setattr(post, column.key, data[column.key])
     db.session.commit()
-
-    return {
-        "id": post.id,
-        "title": post.title,
-        "body": post.body,
-        "created": post.created,
-        "author_id": post.author_id,
-    }
+    
+    post_schema = PostSchema()
+    return post_schema.dump(post)
 
 
 @pages.route("/<int:post_id>", methods=["DELETE"])

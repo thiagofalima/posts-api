@@ -1,8 +1,7 @@
 from flask import Blueprint, request
 from src.models import Role, db
-from sqlalchemy import inspect
 from http import HTTPStatus
-from flask_jwt_extended import jwt_required
+from src.views import RoleSchema
 
 # API RESTFull plural pattern
 pages = Blueprint("role", __name__, url_prefix="/roles")
@@ -18,14 +17,9 @@ def create_role():
 
 def list_roles():
     query = db.select(Role)
-    results = db.session.execute(query).scalars().all()
-    return [
-        {
-            "id": role.id,
-            "name": role.name,
-        }
-        for role in results
-    ]
+    roles = db.session.execute(query).scalars().all()
+    roles_schema = RoleSchema(many=True)
+    return roles_schema.dump(roles)
 
 @pages.route("/", methods=["GET","POST"])
 def handle_roles():
@@ -41,4 +35,5 @@ def handle_roles():
 @pages.route("/<int:role_id>", methods=["GET"])
 def get_user_by_id(role_id):
     role = db.get_or_404(Role, role_id)
-    return {"id": role.id, "name": role.name}
+    role_schema = RoleSchema()
+    return role_schema.dumps(role)
