@@ -12,6 +12,9 @@ class UserSchema(ma.SQLAlchemySchema):
     username = ma.auto_field()
     role = ma.Nested(RoleSchema)
 
+class GetUserParameter(ma.Schema):
+    user_id = fields.Int(required=True)
+
 class CreateUserSchema(ma.Schema):
     username = fields.String(required=True)
     password = fields.String(required=True)

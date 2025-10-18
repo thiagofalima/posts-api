@@ -35,8 +35,6 @@ def _list_users():
     users_schema = UserSchema(many=True)
     return users_schema.dump(users)
 
-
-
 @pages.route("/", methods=["GET", "POST"])
 # @jwt_required()
 # @requires_role("admin")
@@ -53,10 +51,21 @@ def handle_user():
 
 @pages.route("/<int:user_id>", methods=["GET"])
 def get_user_by_id(user_id):
+    """User detail view.
+    ---
+    get:
+        parameters:
+                - in: path
+                name: user_id
+                schema: GetUserSchema
+        responses:
+                200:
+                description: Successful operation   
+                schema: UserSchema
+    """
     user = db.get_or_404(User, user_id)
     user_schema = UserSchema()
     return user_schema.dumps(user)
-
 
 # For partial updates, PATCH
 @pages.route("/<int:user_id>", methods=["GET", "PATCH"])

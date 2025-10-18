@@ -1,14 +1,14 @@
 import os
-from dotenv import load_dotenv
-from flask import Flask
-from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager
-from src.models.base import db
-from flask_bcrypt import Bcrypt
-from flask import json
-from werkzeug.exceptions import HTTPException
-from flask_marshmallow import Marshmallow
 
+from dotenv import load_dotenv
+from flask import Flask, json
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
+from flask_marshmallow import Marshmallow
+from flask_migrate import Migrate
+from werkzeug.exceptions import HTTPException
+
+from src.models.base import db
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ def create_app(environment="Development"):
     ma.init_app(app)
 
     # register blueprint
-    from src.controllers import post, user, auth, role
+    from src.controllers import auth, post, role, user
 
     app.register_blueprint(user.pages)
     app.register_blueprint(post.pages)
